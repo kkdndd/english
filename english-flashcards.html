@@ -1,0 +1,1114 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>English Memory Deck</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #1d2433;
+      --muted: #667085;
+      --line: #d7dde8;
+      --panel: #ffffff;
+      --paper: #f5f7fb;
+      --brand: #2563eb;
+      --brand-dark: #1d4ed8;
+      --mint: #0f9f7f;
+      --amber: #b7791f;
+      --rose: #d64550;
+      --shadow: 0 18px 45px rgba(36, 48, 72, .12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(245, 247, 251, .96), rgba(235, 240, 249, .98)),
+        url("https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=1800&q=80") center / cover fixed;
+    }
+
+    button, input, textarea, select {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .app {
+      width: min(1180px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 24px 0 40px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 20px;
+      align-items: end;
+      padding: 12px 0 22px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 46px);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 10px 0 0;
+      color: var(--muted);
+      max-width: 640px;
+      line-height: 1.5;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 96px);
+      gap: 10px;
+    }
+
+    .stat {
+      background: rgba(255, 255, 255, .82);
+      border: 1px solid rgba(215, 221, 232, .9);
+      border-radius: 8px;
+      padding: 12px;
+      min-height: 78px;
+      box-shadow: 0 10px 26px rgba(36, 48, 72, .08);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 24px;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: 350px minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, .92);
+      border: 1px solid rgba(215, 221, 232, .92);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .composer {
+      padding: 18px;
+      position: sticky;
+      top: 18px;
+    }
+
+    .composer h2, .deck h2 {
+      margin: 0 0 14px;
+      font-size: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 12px;
+      color: #344054;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      margin-top: 7px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      padding: 11px 12px;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 76px;
+      resize: vertical;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, .13);
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .btn {
+      min-height: 42px;
+      border-radius: 8px;
+      padding: 0 14px;
+      background: #edf2ff;
+      color: #1e40af;
+      font-weight: 800;
+      border: 1px solid #c7d2fe;
+    }
+
+    .btn.primary {
+      background: var(--brand);
+      color: white;
+      border-color: var(--brand);
+    }
+
+    .btn.primary:hover {
+      background: var(--brand-dark);
+    }
+
+    .btn.ghost {
+      background: white;
+      color: var(--muted);
+      border-color: var(--line);
+    }
+
+    .btn.danger {
+      background: #fff1f2;
+      color: var(--rose);
+      border-color: #fecdd3;
+    }
+
+    .study {
+      min-height: 448px;
+      padding: 18px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 14px;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .tabs {
+      display: inline-grid;
+      grid-template-columns: repeat(3, minmax(86px, 1fr));
+      gap: 4px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      background: #f8fafc;
+      border-radius: 8px;
+      max-width: 390px;
+    }
+
+    .tab {
+      min-height: 36px;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .tab.active {
+      background: white;
+      color: var(--brand);
+      box-shadow: 0 4px 12px rgba(36, 48, 72, .08);
+    }
+
+    .search {
+      min-width: 220px;
+      margin: 0;
+    }
+
+    .flashcard {
+      display: grid;
+      place-items: center;
+      min-height: 282px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: linear-gradient(180deg, #ffffff, #f9fbff);
+      text-align: center;
+      padding: 24px;
+      user-select: none;
+    }
+
+    .card-content {
+      max-width: 680px;
+      width: 100%;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 28px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: #e7f7f2;
+      color: #0c7963;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .word {
+      margin: 16px 0 10px;
+      font-size: clamp(34px, 7vw, 68px);
+      line-height: 1;
+      overflow-wrap: anywhere;
+    }
+
+    .meaning {
+      margin: 0 auto;
+      color: #344054;
+      font-size: clamp(20px, 3vw, 32px);
+      line-height: 1.3;
+      overflow-wrap: anywhere;
+    }
+
+    .example {
+      margin: 18px auto 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.5;
+      max-width: 560px;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .small {
+      min-height: 42px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: white;
+      color: #344054;
+      font-weight: 800;
+    }
+
+    .small.good {
+      border-color: #99f6e4;
+      color: #0f766e;
+      background: #f0fdfa;
+    }
+
+    .small.bad {
+      border-color: #fecdd3;
+      color: var(--rose);
+      background: #fff1f2;
+    }
+
+    .small.warn {
+      border-color: #fde68a;
+      color: var(--amber);
+      background: #fffbeb;
+    }
+
+    .deck {
+      margin-top: 18px;
+      padding: 18px;
+    }
+
+    .deck-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .list {
+      display: grid;
+      gap: 8px;
+      max-height: 360px;
+      overflow: auto;
+      padding-right: 3px;
+    }
+
+    .item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      padding: 11px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+    }
+
+    .item strong, .item span {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .item span {
+      color: var(--muted);
+      margin-top: 3px;
+      font-size: 13px;
+    }
+
+    .iconbar {
+      display: flex;
+      gap: 6px;
+    }
+
+    .icon {
+      width: 36px;
+      height: 36px;
+      display: inline-grid;
+      place-items: center;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #344054;
+      font-weight: 900;
+    }
+
+    .empty {
+      min-height: 180px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      padding: 22px;
+    }
+
+    .quiz-box {
+      display: grid;
+      gap: 10px;
+      width: min(560px, 100%);
+      margin: 20px auto 0;
+    }
+
+    .choice {
+      min-height: 46px;
+      border: 1px solid var(--line);
+      background: white;
+      border-radius: 8px;
+      color: #344054;
+      font-weight: 800;
+      padding: 0 14px;
+    }
+
+    .choice.correct { border-color: #5eead4; background: #f0fdfa; color: #0f766e; }
+    .choice.wrong { border-color: #fecdd3; background: #fff1f2; color: var(--rose); }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%);
+      background: #101828;
+      color: white;
+      border-radius: 8px;
+      padding: 12px 16px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease, bottom .2s ease;
+      z-index: 10;
+    }
+
+    .toast.show {
+      opacity: 1;
+      bottom: 28px;
+    }
+
+    @media (max-width: 900px) {
+      header, .shell {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .composer {
+        position: static;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .app {
+        width: min(100vw - 20px, 1180px);
+        padding-top: 12px;
+      }
+
+      .toolbar, .controls, .row {
+        grid-template-columns: 1fr;
+      }
+
+      .tabs {
+        grid-template-columns: 1fr;
+        max-width: none;
+      }
+
+      .search {
+        min-width: 0;
+      }
+
+      .flashcard {
+        min-height: 250px;
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <div>
+        <h1>English Memory Deck</h1>
+        <p class="subtitle">단어를 추가하고, 카드를 넘기며 외우고, 퀴즈로 바로 확인하는 개인 영어 암기장입니다.</p>
+      </div>
+      <section class="stats" aria-label="학습 현황">
+        <div class="stat"><strong id="totalCount">0</strong><span>전체 단어</span></div>
+        <div class="stat"><strong id="knownCount">0</strong><span>외운 단어</span></div>
+        <div class="stat"><strong id="starCount">0</strong><span>중요 단어</span></div>
+      </section>
+    </header>
+
+    <section class="shell">
+      <aside class="panel composer">
+        <h2>새 단어</h2>
+        <form id="cardForm">
+          <label>영어 단어
+            <input id="wordInput" autocomplete="off" placeholder="ex. resilient" required>
+          </label>
+          <label>뜻
+            <input id="meaningInput" autocomplete="off" placeholder="회복력 있는" required>
+          </label>
+          <label>예문
+            <textarea id="exampleInput" placeholder="She stayed resilient during the project."></textarea>
+          </label>
+          <div class="row">
+            <label>분류
+              <select id="levelInput">
+                <option>Daily</option>
+                <option>TOEIC</option>
+                <option>Business</option>
+                <option>Travel</option>
+              </select>
+            </label>
+            <label>중요
+              <select id="starInput">
+                <option value="false">보통</option>
+                <option value="true">중요</option>
+              </select>
+            </label>
+          </div>
+          <div class="actions">
+            <button class="btn primary" type="submit">추가</button>
+            <button class="btn ghost" type="button" id="sampleBtn">샘플 채우기</button>
+            <button class="btn danger" type="button" id="resetBtn">초기화</button>
+          </div>
+        </form>
+      </aside>
+
+      <div>
+        <section class="panel study" aria-label="학습 카드">
+          <div class="toolbar">
+            <div class="tabs" role="tablist">
+              <button class="tab active" data-mode="flash" type="button">카드</button>
+              <button class="tab" data-mode="quiz" type="button">퀴즈</button>
+              <button class="tab" data-mode="review" type="button">복습</button>
+            </div>
+            <input class="search" id="searchInput" placeholder="단어 검색">
+          </div>
+
+          <div class="flashcard" id="studyArea"></div>
+
+          <div class="controls">
+            <button class="small" id="prevBtn" type="button">이전</button>
+            <button class="small" id="flipBtn" type="button">뒤집기</button>
+            <button class="small warn" id="starBtn" type="button">중요</button>
+            <button class="small bad" id="againBtn" type="button">다시</button>
+            <button class="small good" id="knownBtn" type="button">외움</button>
+          </div>
+        </section>
+
+        <section class="panel deck">
+          <div class="deck-head">
+            <h2>내 단어장</h2>
+            <button class="btn ghost" id="exportBtn" type="button">내보내기</button>
+          </div>
+          <div class="list" id="wordList"></div>
+        </section>
+      </div>
+    </section>
+  </main>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const toeicWordBank = [
+      ["abide by", "준수하다", "All employees must abide by the safety policy."],
+      ["accommodate", "수용하다, 편의를 제공하다", "The hotel can accommodate large groups."],
+      ["accompany", "동행하다, 수반하다", "A guide will accompany the visitors."],
+      ["accordingly", "그에 따라서", "The schedule changed, so we acted accordingly."],
+      ["accountant", "회계사", "The accountant reviewed the expense report."],
+      ["accurate", "정확한", "Please provide accurate contact information."],
+      ["acknowledge", "인정하다, 확인하다", "We acknowledge receipt of your application."],
+      ["acquire", "취득하다, 인수하다", "The company plans to acquire a smaller firm."],
+      ["adequate", "충분한, 적절한", "The room has adequate lighting."],
+      ["adjacent", "인접한", "The parking lot is adjacent to the building."],
+      ["adjustment", "조정, 수정", "A price adjustment was made last week."],
+      ["administrative", "행정의", "She handles administrative duties."],
+      ["advantageous", "유리한", "The new location is advantageous for commuters."],
+      ["advertise", "광고하다", "They will advertise the opening online."],
+      ["affordable", "가격이 알맞은", "We offer affordable office furniture."],
+      ["agenda", "의제, 안건", "The agenda includes budget planning."],
+      ["allocate", "할당하다", "Funds were allocated to training programs."],
+      ["anticipate", "예상하다", "We anticipate higher demand this summer."],
+      ["applicant", "지원자", "Each applicant must submit a resume."],
+      ["appreciate", "감사하다, 높이 평가하다", "We appreciate your prompt response."],
+      ["approval", "승인", "The project is waiting for final approval."],
+      ["arrangement", "준비, 배치", "Travel arrangements have been completed."],
+      ["assemble", "조립하다, 모이다", "Workers assemble the parts on site."],
+      ["assessment", "평가", "The assessment will take one hour."],
+      ["assign", "배정하다", "The manager assigned tasks to the team."],
+      ["assist", "돕다", "A clerk will assist you with the form."],
+      ["assume", "추정하다, 맡다", "Do not assume the client has read the report."],
+      ["assurance", "보장, 확신", "Quality assurance is our priority."],
+      ["attach", "첨부하다", "Please attach the invoice to your email."],
+      ["attendance", "출석, 참석", "Attendance at the seminar is required."],
+      ["authorize", "승인하다, 권한을 부여하다", "Only supervisors can authorize refunds."],
+      ["available", "이용 가능한", "The conference room is available after two."],
+      ["be eligible for", "자격이 있다", "Full-time workers are eligible for benefits."],
+      ["beneficial", "유익한", "The workshop was beneficial to new staff."],
+      ["bid", "입찰", "The contractor submitted the lowest bid."],
+      ["billing", "청구, 대금 청구", "Contact billing for payment questions."],
+      ["briefly", "간단히", "The director spoke briefly after lunch."],
+      ["brochure", "안내 책자", "The brochure lists our services."],
+      ["candidate", "후보자", "The candidate has strong sales experience."],
+      ["capacity", "수용 인원, 능력", "The hall has a capacity of 300 people."],
+      ["carrier", "운송 회사", "The carrier delayed the shipment."],
+      ["cater", "음식을 공급하다", "The restaurant will cater the event."],
+      ["certificate", "증명서", "Participants receive a certificate."],
+      ["chairperson", "의장", "The chairperson opened the meeting."],
+      ["clarify", "명확히 하다", "Could you clarify the deadline?"],
+      ["clientele", "고객층", "The store attracts wealthy clientele."],
+      ["collaborate", "협력하다", "The teams collaborate on product design."],
+      ["commence", "시작하다", "Construction will commence in July."],
+      ["commuter", "통근자", "Commuters prefer the express train."],
+      ["compatible", "호환되는", "This software is compatible with older systems."],
+      ["compensate", "보상하다", "The airline compensated delayed passengers."],
+      ["compile", "편집하다, 모으다", "She compiled data for the report."],
+      ["complimentary", "무료의", "Guests receive complimentary breakfast."],
+      ["comply with", "준수하다", "The factory must comply with regulations."],
+      ["comprehensive", "포괄적인", "We need a comprehensive marketing plan."],
+      ["concise", "간결한", "Keep your answer concise and specific."],
+      ["conduct", "수행하다, 실시하다", "The firm conducted a survey."],
+      ["conference", "회의, 학회", "The annual conference begins Monday."],
+      ["confirm", "확인하다", "Please confirm your reservation."],
+      ["consecutive", "연속적인", "Sales increased for three consecutive months."],
+      ["considerable", "상당한", "The policy saved considerable time."],
+      ["consistently", "일관되게", "She consistently meets her targets."],
+      ["consultant", "상담가, 컨설턴트", "A consultant advised the board."],
+      ["consume", "소비하다", "The machine consumes less energy."],
+      ["contractor", "계약업체", "The contractor repaired the roof."],
+      ["contribute", "기여하다", "Everyone contributed to the success."],
+      ["convenient", "편리한", "The hotel is convenient for business travelers."],
+      ["coordinate", "조정하다", "He coordinates meetings with vendors."],
+      ["courier", "택배 기사, 특송 회사", "The courier delivered the package."],
+      ["credential", "자격, 증명서", "Bring your credentials to the interview."],
+      ["deadline", "마감일", "The deadline has been extended."],
+      ["deduct", "공제하다", "Taxes are deducted from each paycheck."],
+      ["defective", "결함이 있는", "Defective items can be returned."],
+      ["delegate", "위임하다", "The director delegated the task."],
+      ["deliberately", "고의로, 신중히", "The plan was deliberately simple."],
+      ["demonstrate", "보여 주다, 입증하다", "The trainer demonstrated the new feature."],
+      ["department", "부서", "The accounting department is hiring."],
+      ["deposit", "보증금, 예금하다", "A deposit is required to reserve the room."],
+      ["designate", "지정하다", "Please designate a team leader."],
+      ["determine", "결정하다, 알아내다", "We must determine the cause."],
+      ["discount", "할인", "Members receive a ten percent discount."],
+      ["discrepancy", "불일치", "There is a discrepancy in the invoice."],
+      ["distribute", "배포하다", "Staff distributed the survey forms."],
+      ["diverse", "다양한", "The company serves diverse clients."],
+      ["donation", "기부", "The donation supported local schools."],
+      ["durable", "내구성이 있는", "The equipment is durable and easy to clean."],
+      ["efficient", "효율적인", "The new process is more efficient."],
+      ["eligible", "자격이 있는", "Eligible employees may apply."],
+      ["enclose", "동봉하다", "I enclosed a copy of the receipt."],
+      ["endeavor", "노력하다", "We endeavor to improve service."],
+      ["enroll", "등록하다", "Employees can enroll in the course online."],
+      ["ensure", "보장하다, 확실히 하다", "Please ensure that all doors are locked."],
+      ["equipment", "장비", "The laboratory needs new equipment."],
+      ["estimate", "견적, 추정하다", "The estimate includes labor costs."],
+      ["evaluate", "평가하다", "Managers evaluate performance twice a year."],
+      ["exceed", "초과하다", "Expenses should not exceed the budget."],
+      ["exceptional", "뛰어난, 예외적인", "She received praise for exceptional service."],
+      ["exclusively", "독점적으로, 오로지", "The offer is exclusively for members."],
+      ["expand", "확장하다", "The retailer plans to expand overseas."],
+      ["expense", "비용", "Save receipts for business expenses."],
+      ["expertise", "전문 지식", "Her expertise is in logistics."],
+      ["expiration", "만료", "Check the expiration date on the card."],
+      ["facility", "시설", "The facility closes at ten."],
+      ["favorable", "호의적인, 유리한", "The product received favorable reviews."],
+      ["feature", "특징, 특집으로 다루다", "The printer features wireless setup."],
+      ["financial", "재정의", "The financial report is due Friday."],
+      ["firm", "회사, 확고한", "The firm opened a branch downtown."],
+      ["flexible", "유연한", "The position offers flexible hours."],
+      ["fluctuate", "변동하다", "Prices fluctuate during peak season."],
+      ["forecast", "예측하다, 예보", "The forecast predicts heavy rain."],
+      ["freight", "화물", "Freight charges are listed separately."],
+      ["frequently", "자주", "The website is updated frequently."],
+      ["fulfill", "이행하다, 충족시키다", "The supplier fulfilled the order."],
+      ["fund", "자금, 기금", "The city created a fund for repairs."],
+      ["generate", "발생시키다, 창출하다", "The campaign generated many leads."],
+      ["guarantee", "보장하다, 보증", "We guarantee delivery within two days."],
+      ["hesitate", "망설이다", "Please do not hesitate to contact us."],
+      ["implement", "시행하다", "The company implemented new guidelines."],
+      ["imply", "암시하다, 의미하다", "The notice implies a policy change."],
+      ["incentive", "장려책, 보상", "The bonus is an incentive for high sales."],
+      ["inclement", "악천후의", "The event was canceled due to inclement weather."],
+      ["indicate", "나타내다", "The chart indicates steady growth."],
+      ["inquire", "문의하다", "Customers may inquire by phone."],
+      ["inspect", "검사하다", "Technicians inspect the machines monthly."],
+      ["install", "설치하다", "A technician will install the router."],
+      ["instruction", "지시, 설명", "Follow the instructions carefully."],
+      ["inventory", "재고", "Inventory is checked every week."],
+      ["invoice", "송장, 청구서", "The invoice was sent yesterday."],
+      ["itinerary", "여행 일정", "Please send me the itinerary before Friday."],
+      ["lease", "임대차 계약", "The lease expires next month."],
+      ["legible", "읽기 쉬운", "Please write in legible print."],
+      ["liability", "책임, 부채", "The insurance covers liability claims."],
+      ["maintenance", "유지 보수", "The elevator is closed for maintenance."],
+      ["mandatory", "의무적인", "Safety training is mandatory."],
+      ["manufacturer", "제조업체", "The manufacturer recalled the product."],
+      ["merchandise", "상품", "The store displays new merchandise."],
+      ["modify", "수정하다", "We modified the proposal."],
+      ["negotiate", "협상하다", "They negotiated a better delivery date."],
+      ["notify", "알리다", "Please notify us of any changes."],
+      ["occupation", "직업", "List your current occupation."],
+      ["operate", "운영하다, 작동하다", "The machine operates quietly."],
+      ["outstanding", "미해결의, 뛰어난", "There are two outstanding invoices."],
+      ["oversee", "감독하다", "She oversees daily operations."],
+      ["participant", "참가자", "Each participant received materials."],
+      ["patron", "고객, 후원자", "Patrons praised the new menu."],
+      ["payroll", "급여 명부", "Payroll is processed on Friday."],
+      ["permit", "허가하다, 허가증", "A parking permit is required."],
+      ["persuade", "설득하다", "The speaker persuaded many investors."],
+      ["policy", "정책, 방침", "The refund policy is posted online."],
+      ["postpone", "연기하다", "The meeting was postponed until Monday."],
+      ["precaution", "예방 조치", "Take precautions when handling chemicals."],
+      ["preliminary", "예비의", "Preliminary results look promising."],
+      ["premises", "구내, 부지", "Smoking is not allowed on the premises."],
+      ["prescription", "처방전", "The pharmacy filled the prescription."],
+      ["prior to", "이전에", "Register prior to the deadline."],
+      ["proceed", "진행하다", "Please proceed to the reception desk."],
+      ["procure", "조달하다", "The team procured new laptops."],
+      ["productivity", "생산성", "Productivity improved after training."],
+      ["proficient", "능숙한", "Applicants must be proficient in Excel."],
+      ["prominently", "눈에 띄게", "The notice was displayed prominently."],
+      ["promptly", "즉시", "Respond promptly to customer requests."],
+      ["proposal", "제안서", "The proposal was approved."],
+      ["prospective", "장래의, 잠재적인", "Prospective clients toured the facility."],
+      ["provider", "공급자, 제공자", "Choose a reliable service provider."],
+      ["purchase", "구매하다", "You can purchase tickets online."],
+      ["qualified", "자격 있는", "Only qualified technicians may apply."],
+      ["quote", "견적", "We requested a quote from the vendor."],
+      ["receipt", "영수증", "Keep the receipt for your records."],
+      ["reception", "접수처, 환영회", "The reception is on the first floor."],
+      ["reimburse", "환급하다", "The company will reimburse travel costs."],
+      ["renovate", "개조하다", "They renovated the lobby."],
+      ["representative", "대표자, 직원", "A representative will call you soon."],
+      ["request", "요청하다, 요청", "Submit your request by email."],
+      ["requirement", "요건", "The job has several requirements."],
+      ["reschedule", "일정을 변경하다", "We need to reschedule the appointment."],
+      ["resilient", "회복력 있는", "She stayed resilient during a difficult semester."],
+      ["resolve", "해결하다", "The technician resolved the issue."],
+      ["retain", "유지하다, 보유하다", "Please retain a copy of the contract."],
+      ["revenue", "수익", "Revenue increased in the first quarter."],
+      ["revise", "수정하다", "The editor revised the document."],
+      ["routine", "일상적인", "Routine inspections are scheduled monthly."],
+      ["shipment", "배송, 선적", "The shipment arrived ahead of schedule."],
+      ["shortage", "부족", "A staff shortage caused delays."],
+      ["significant", "상당한, 중요한", "The change had a significant impact."],
+      ["specification", "명세, 사양", "The product meets all specifications."],
+      ["stationery", "문구류", "We ordered stationery for the office."],
+      ["strategy", "전략", "The strategy focuses on online sales."],
+      ["submit", "제출하다", "Submit the form before noon."],
+      ["substantial", "상당한", "The project requires substantial funding."],
+      ["sufficient", "충분한", "There is sufficient time to prepare."],
+      ["supervise", "감독하다", "He supervises the night shift."],
+      ["supplier", "공급업체", "The supplier offered a discount."],
+      ["tentative", "잠정적인", "The schedule is tentative."],
+      ["thorough", "철저한", "The auditor made a thorough review."],
+      ["transaction", "거래", "The transaction was completed online."],
+      ["transfer", "이전하다, 전근시키다", "Funds can transfer within one day."],
+      ["unanimous", "만장일치의", "The decision was unanimous."],
+      ["undergo", "겪다, 받다", "The building will undergo repairs."],
+      ["undertake", "맡다, 착수하다", "The team will undertake the project."],
+      ["update", "갱신하다", "Please update your address."],
+      ["vacancy", "공석, 빈방", "There is a vacancy in sales."],
+      ["valid", "유효한", "A valid ID is required."],
+      ["vendor", "판매업체", "The vendor supplied office chairs."],
+      ["venue", "장소", "The venue can hold 500 guests."],
+      ["verify", "확인하다", "Please verify your account number."],
+      ["warranty", "보증서", "The laptop comes with a warranty."],
+      ["withdraw", "철회하다, 인출하다", "The applicant withdrew her application."]
+    ];
+
+    const seedCards = toeicWordBank.map(([word, meaning, example], index) => ({
+      word,
+      meaning,
+      example,
+      level: "TOEIC",
+      starred: index < 20,
+      known: false,
+      misses: 0
+    }));
+
+    const storageKey = "english-memory-deck-v1";
+    const $ = (id) => document.getElementById(id);
+    let cards = loadCards();
+    let current = 0;
+    let flipped = false;
+    let mode = "flash";
+    let quizLocked = false;
+
+    function loadCards() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(storageKey) || "null");
+        if (!Array.isArray(saved) || !saved.length) return seedCards;
+        const seen = new Set(saved.map((card) => card.word.toLowerCase()));
+        const additions = seedCards.filter((card) => !seen.has(card.word.toLowerCase()));
+        const merged = [...saved, ...additions];
+        localStorage.setItem(storageKey, JSON.stringify(merged));
+        return merged;
+      } catch {
+        return seedCards;
+      }
+    }
+
+    function saveCards() {
+      localStorage.setItem(storageKey, JSON.stringify(cards));
+    }
+
+    function filteredCards() {
+      const query = $("searchInput").value.trim().toLowerCase();
+      let pool = cards;
+      if (mode === "review") {
+        pool = cards.filter((card) => card.starred || !card.known || card.misses > 0);
+      }
+      if (!query) return pool;
+      return pool.filter((card) =>
+        card.word.toLowerCase().includes(query) ||
+        card.meaning.toLowerCase().includes(query) ||
+        card.level.toLowerCase().includes(query)
+      );
+    }
+
+    function activeCard() {
+      const pool = filteredCards();
+      if (!pool.length) return null;
+      current = Math.max(0, Math.min(current, pool.length - 1));
+      return pool[current];
+    }
+
+    function render() {
+      renderStats();
+      renderStudy();
+      renderList();
+    }
+
+    function renderStats() {
+      $("totalCount").textContent = cards.length;
+      $("knownCount").textContent = cards.filter((card) => card.known).length;
+      $("starCount").textContent = cards.filter((card) => card.starred).length;
+    }
+
+    function renderStudy() {
+      const area = $("studyArea");
+      const pool = filteredCards();
+      const card = activeCard();
+      quizLocked = false;
+
+      if (!card) {
+        area.innerHTML = `<div class="empty">조건에 맞는 단어가 없습니다.</div>`;
+        return;
+      }
+
+      if (mode === "quiz") {
+        renderQuiz(area, card);
+        return;
+      }
+
+      const front = `
+        <div class="card-content">
+          <span class="badge">${card.level} · ${current + 1}/${pool.length}</span>
+          <h2 class="word">${escapeHtml(card.word)}</h2>
+          <p class="example">${card.example ? escapeHtml(card.example) : "예문을 추가하면 문맥까지 함께 외울 수 있어요."}</p>
+        </div>`;
+      const back = `
+        <div class="card-content">
+          <span class="badge">${card.known ? "외운 단어" : "학습 중"} · ${card.starred ? "중요" : "보통"}</span>
+          <h2 class="meaning">${escapeHtml(card.meaning)}</h2>
+          <p class="example">${escapeHtml(card.word)}${card.example ? " · " + escapeHtml(card.example) : ""}</p>
+        </div>`;
+
+      area.innerHTML = flipped ? back : front;
+    }
+
+    function renderQuiz(area, card) {
+      const options = makeOptions(card);
+      area.innerHTML = `
+        <div class="card-content">
+          <span class="badge">퀴즈 · ${current + 1}/${filteredCards().length}</span>
+          <h2 class="word">${escapeHtml(card.word)}</h2>
+          <div class="quiz-box">
+            ${options.map((option) => `<button class="choice" type="button" data-answer="${escapeHtml(option)}">${escapeHtml(option)}</button>`).join("")}
+          </div>
+        </div>`;
+
+      area.querySelectorAll(".choice").forEach((button) => {
+        button.addEventListener("click", () => {
+          if (quizLocked) return;
+          quizLocked = true;
+          const isCorrect = button.dataset.answer === card.meaning;
+          button.classList.add(isCorrect ? "correct" : "wrong");
+          area.querySelectorAll(".choice").forEach((choice) => {
+            if (choice.dataset.answer === card.meaning) choice.classList.add("correct");
+          });
+          card.known = isCorrect;
+          card.misses = isCorrect ? Math.max(0, card.misses - 1) : card.misses + 1;
+          saveCards();
+          renderStats();
+          showToast(isCorrect ? "정답입니다." : "다시 보면 오래 남습니다.");
+          setTimeout(nextCard, 900);
+        });
+      });
+    }
+
+    function makeOptions(card) {
+      const wrong = cards
+        .filter((item) => item.word !== card.word)
+        .map((item) => item.meaning)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 3);
+      while (wrong.length < 3) wrong.push(["관련된", "선명한", "꾸준한"][wrong.length]);
+      return [card.meaning, ...wrong].sort(() => Math.random() - 0.5);
+    }
+
+    function renderList() {
+      const list = $("wordList");
+      if (!cards.length) {
+        list.innerHTML = `<div class="empty">아직 단어가 없습니다.</div>`;
+        return;
+      }
+
+      list.innerHTML = cards.map((card, index) => `
+        <article class="item">
+          <div>
+            <strong>${card.starred ? "★ " : ""}${escapeHtml(card.word)}</strong>
+            <span>${escapeHtml(card.meaning)} · ${card.level}${card.known ? " · 외움" : ""}</span>
+          </div>
+          <div class="iconbar">
+            <button class="icon" title="학습" type="button" data-jump="${index}">→</button>
+            <button class="icon" title="삭제" type="button" data-remove="${index}">×</button>
+          </div>
+        </article>
+      `).join("");
+
+      list.querySelectorAll("[data-jump]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const card = cards[Number(button.dataset.jump)];
+          const pool = filteredCards();
+          current = Math.max(0, pool.indexOf(card));
+          flipped = false;
+          renderStudy();
+        });
+      });
+
+      list.querySelectorAll("[data-remove]").forEach((button) => {
+        button.addEventListener("click", () => {
+          cards.splice(Number(button.dataset.remove), 1);
+          current = 0;
+          saveCards();
+          render();
+          showToast("단어를 삭제했습니다.");
+        });
+      });
+    }
+
+    function nextCard() {
+      const pool = filteredCards();
+      if (!pool.length) return render();
+      current = (current + 1) % pool.length;
+      flipped = false;
+      renderStudy();
+    }
+
+    function prevCard() {
+      const pool = filteredCards();
+      if (!pool.length) return render();
+      current = (current - 1 + pool.length) % pool.length;
+      flipped = false;
+      renderStudy();
+    }
+
+    function escapeHtml(text) {
+      return String(text).replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    function showToast(message) {
+      const toast = $("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove("show"), 1500);
+    }
+
+    $("cardForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const card = {
+        word: $("wordInput").value.trim(),
+        meaning: $("meaningInput").value.trim(),
+        example: $("exampleInput").value.trim(),
+        level: $("levelInput").value,
+        starred: $("starInput").value === "true",
+        known: false,
+        misses: 0
+      };
+      if (!card.word || !card.meaning) return;
+      cards.unshift(card);
+      current = 0;
+      flipped = false;
+      saveCards();
+      event.target.reset();
+      render();
+      showToast("단어를 추가했습니다.");
+    });
+
+    $("sampleBtn").addEventListener("click", () => {
+      $("wordInput").value = "elaborate";
+      $("meaningInput").value = "자세히 설명하다";
+      $("exampleInput").value = "Could you elaborate on your idea?";
+      $("levelInput").value = "Business";
+      $("starInput").value = "true";
+      $("wordInput").focus();
+    });
+
+    $("resetBtn").addEventListener("click", () => {
+      if (!confirm("저장된 단어장을 샘플 상태로 되돌릴까요?")) return;
+      cards = [...seedCards];
+      current = 0;
+      flipped = false;
+      saveCards();
+      render();
+      showToast("초기화했습니다.");
+    });
+
+    $("searchInput").addEventListener("input", () => {
+      current = 0;
+      flipped = false;
+      renderStudy();
+    });
+
+    document.querySelectorAll(".tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach((item) => item.classList.remove("active"));
+        tab.classList.add("active");
+        mode = tab.dataset.mode;
+        current = 0;
+        flipped = false;
+        renderStudy();
+      });
+    });
+
+    $("studyArea").addEventListener("click", () => {
+      if (mode !== "quiz") {
+        flipped = !flipped;
+        renderStudy();
+      }
+    });
+
+    $("prevBtn").addEventListener("click", prevCard);
+    $("flipBtn").addEventListener("click", () => {
+      flipped = !flipped;
+      renderStudy();
+    });
+    $("starBtn").addEventListener("click", () => {
+      const card = activeCard();
+      if (!card) return;
+      card.starred = !card.starred;
+      saveCards();
+      render();
+      showToast(card.starred ? "중요 단어로 표시했습니다." : "중요 표시를 해제했습니다.");
+    });
+    $("againBtn").addEventListener("click", () => {
+      const card = activeCard();
+      if (!card) return;
+      card.known = false;
+      card.misses += 1;
+      saveCards();
+      nextCard();
+    });
+    $("knownBtn").addEventListener("click", () => {
+      const card = activeCard();
+      if (!card) return;
+      card.known = true;
+      card.misses = Math.max(0, card.misses - 1);
+      saveCards();
+      nextCard();
+    });
+    $("exportBtn").addEventListener("click", async () => {
+      const text = cards.map((card) => `${card.word}\t${card.meaning}\t${card.example || ""}\t${card.level}`).join("\n");
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast("단어장을 클립보드에 복사했습니다.");
+      } catch {
+        showToast("복사 권한이 없어 화면에서 선택해 복사해주세요.");
+        alert(text);
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.target.matches("input, textarea, select")) return;
+      if (event.key === "ArrowRight") nextCard();
+      if (event.key === "ArrowLeft") prevCard();
+      if (event.key === " ") {
+        event.preventDefault();
+        flipped = !flipped;
+        renderStudy();
+      }
+    });
+
+    render();
+  </script>
+</body>
+</html>
